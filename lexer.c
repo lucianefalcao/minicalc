@@ -63,6 +63,17 @@ Token* ProximoToken() {
     // pula espaços em branco
     while (!eof() && isspace(buffer->cont[pos]))
         pos++;
+    
+    while(!eof() && buffer->cont[pos] == '#'){
+        while(pos < buffer->tam){
+            ++pos;
+
+            if(buffer->cont[pos] == '\n'){
+                ++pos;
+                break;
+            }
+        }
+    }
 
     if (eof()) {
         tok->tipo = TOKEN_EOF;
