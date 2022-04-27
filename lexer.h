@@ -17,12 +17,13 @@ typedef enum tagTipoToken {
     TOKEN_DIV,
     TOKEN_ABRECOLCH,
     TOKEN_FECHACOLCH,
+    TOKEN_DECIMAL,
     TOKEN_EOF,
 } TipoToken;
 
 typedef struct tagToken {
     TipoToken tipo;
-    int       valor;
+    double    valor;
 } Token;
 
 

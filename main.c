@@ -44,6 +44,9 @@ void ImprimeTipoToken(TipoToken tipo) {
         case TOKEN_FECHACOLCH:
             printf("TOKEN_FECHACOLCH");
             break;
+        case TOKEN_DECIMAL:
+            printf("TOKEN_DECIMAL");
+            break;
         case TOKEN_ERRO:
             printf("TOKEN_ERRO");
             break;
@@ -59,7 +62,7 @@ int main() {
     while (t->tipo != TOKEN_EOF) {
         printf("Tipo do token: ");
         ImprimeTipoToken(t->tipo);
-        printf(" - Valor do token: %d\n", t->valor);
+        printf(" - Valor do token: %.1f\n", t->valor);
 
         t = ProximoToken();
     }

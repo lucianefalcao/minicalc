@@ -84,12 +84,27 @@ Token* ProximoToken() {
         free(texto);
     } else if (isdigit(buffer->cont[pos])) {
         long initPos = pos;
+        bool dotFound = false;
+        bool decimal = false;
         // TODO: verificar se existe erro léxico no final do literal inteiro
-        while (!eof() && isdigit(buffer->cont[pos]))
+        while (!eof() && (isdigit(buffer->cont[pos]) || buffer->cont[pos] == '.')) {
+            if (buffer->cont[pos] == '.') {
+                dotFound = true;
+                decimal = true;
+            }
             pos++;
+        }
+
         char *texto = TextoToken(initPos, pos);
-        tok->tipo = TOKEN_INT;
-        tok->valor = atoi(texto);
+        
+        if (decimal) {
+            tok->tipo = TOKEN_DECIMAL;
+            sscanf(texto, "%lf", &tok->valor);
+        } else {
+            tok->tipo = TOKEN_INT;
+            tok->valor = atoi(texto);
+        }
+
         free(texto);
     } else if (simbolo(buffer->cont[pos])) {
         switch (buffer->cont[pos]) {
