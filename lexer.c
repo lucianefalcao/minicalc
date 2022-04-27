@@ -26,7 +26,7 @@ void InicializaLexer(char *arqFonte) {
     }
 
     tok->tipo = TOKEN_EOF;
-    tok->valor = 0;
+    tok->valor.valorInt = 0;
 }
 
 bool eof() {
@@ -77,7 +77,7 @@ Token* ProximoToken() {
 
     if (eof()) {
         tok->tipo = TOKEN_EOF;
-        tok->valor = 0;
+        tok->valor.valorInt = 0;
     } else if (isalpha(buffer->cont[pos])) {
         long initPos = pos;
         while (!eof() && !isspace(buffer->cont[pos]))
@@ -87,20 +87,18 @@ Token* ProximoToken() {
         if (strcmp(texto, "print") == 0)
         {
             tok->tipo = TOKEN_PRINT;
-            tok->valor = 0;
+            tok->valor.valorInt = 0;
         } else {
             tok->tipo = TOKEN_ERRO;
-            tok->valor = 0;
+            tok->valor.valorInt = 0;
         }
         free(texto);
     } else if (isdigit(buffer->cont[pos])) {
         long initPos = pos;
-        bool dotFound = false;
         bool decimal = false;
         // TODO: verificar se existe erro léxico no final do literal inteiro
         while (!eof() && (isdigit(buffer->cont[pos]) || buffer->cont[pos] == '.')) {
             if (buffer->cont[pos] == '.') {
-                dotFound = true;
                 decimal = true;
             }
             pos++;
@@ -110,10 +108,10 @@ Token* ProximoToken() {
         
         if (decimal) {
             tok->tipo = TOKEN_DECIMAL;
-            sscanf(texto, "%lf", &tok->valor);
+            sscanf(texto, "%lf", &tok->valor.valorFloat);
         } else {
             tok->tipo = TOKEN_INT;
-            tok->valor = atoi(texto);
+            tok->valor.valorInt = atoi(texto);
         }
 
         free(texto);
@@ -146,11 +144,11 @@ Token* ProximoToken() {
             default:
                 fprintf(stderr, "Simbolo não esperado: %c\n", buffer->cont[pos]);
         }
-        tok->valor = 0;
+        tok->valor.valorInt = 0;
         pos++;
     } else {
         tok->tipo = TOKEN_ERRO;
-        tok->valor = 0;
+        tok->valor.valorInt = 0;
     }
 
     return tok;

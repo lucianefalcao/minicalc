@@ -62,7 +62,13 @@ int main() {
     while (t->tipo != TOKEN_EOF) {
         printf("Tipo do token: ");
         ImprimeTipoToken(t->tipo);
-        printf(" - Valor do token: %.1f\n", t->valor);
+
+        if (t->tipo == TOKEN_DECIMAL) {
+            printf(" - Valor do token: %f\n", t->valor.valorFloat);
+        } else {
+            printf(" - Valor do token: %d\n", t->valor.valorInt);
+        }
+
 
         t = ProximoToken();
     }

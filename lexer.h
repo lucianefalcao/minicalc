@@ -5,6 +5,8 @@
 #ifndef MINICALC_LEXER_H
 #define MINICALC_LEXER_H
 
+#include <stdbool.h>
+
 typedef enum tagTipoToken {
     TOKEN_INT,
     TOKEN_PRINT,
@@ -23,7 +25,10 @@ typedef enum tagTipoToken {
 
 typedef struct tagToken {
     TipoToken tipo;
-    double    valor;
+    union {
+        int valorInt;
+        double valorFloat;
+    } valor;
 } Token;
 
 
