@@ -43,12 +43,12 @@ print (4 + (2 * 3))
 - [x] Adicione suporte no analisador léxico para operador de subtração, -
 - [x] Adicione suporte no analisador léxico para operador de divisão, /
 - [x] Adicione suporte no analisador léxico para colchetes []
-- [ ] O que acontece, no código atual, se o arquivo-fonte contiver uma constante
+- [x] O que acontece, no código atual, se o arquivo-fonte contiver uma constante
 numérica com ponto decimal? Faça o teste executando o programa, mostre a saída
 obtida e explique o que está acontecendo.
-- [ ] **Opcional**: adicione suporte no analisador léxico para reconhecer constantes
+- [x] **Opcional**: adicione suporte no analisador léxico para reconhecer constantes
 numéricas com ponto decimal
-- [ ] **Opcional**: adicione suporte a comentários no código-fonte. Comentários não geram
+- [x] **Opcional**: adicione suporte a comentários no código-fonte. Comentários não geram
 token, devem apenas ser pulados como se fossem espaço em branco. Comentários
 devem começar com # e continuam até o final da linha. Após encontrar #, o
 analisador léxico deve ignorar todos os caracteres até encontrar um caractere de
