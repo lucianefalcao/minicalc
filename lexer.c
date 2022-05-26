@@ -51,7 +51,7 @@ char* TextoToken(long ini, long fim) {
 }
 
 bool simbolo(char c) {
-    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/');
+    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/' || c == '[' || c == ']');
 }
 
 // função: ProximoToken

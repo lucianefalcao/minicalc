@@ -43,6 +43,9 @@ Expressao *AnaliseExpressao()
     // analisa a expressao
     Expressao *res = (Expressao *)malloc(sizeof(Expressao));
 
+    TipoToken tipoFechamentoToken;
+    char tokenFechamento, tokenAbertura; // o tipo do fechamento de ser igual o de abertura, '(' ou '['.[]
+
     // parentese abrindo
     t = ProximoToken();
     Token *b = t;
@@ -56,10 +59,21 @@ Expressao *AnaliseExpressao()
         res->op2 = NULL;
         return res;
     }
+    
+    if(t->tipo == TOKEN_ABREPAR){
+        tipoFechamentoToken = TOKEN_FECHAPAR;
+        tokenFechamento = ')';
+        tokenAbertura = '(';
+    }
+    else if(t->tipo == TOKEN_ABRECOLCH){
+        tipoFechamentoToken = TOKEN_FECHACOLCH;
+        tokenFechamento = ']';
+        tokenAbertura = '[';        
+    }
 
-    if (t->tipo != TOKEN_ABREPAR)
+    if (t->tipo != TOKEN_ABREPAR && t->tipo != TOKEN_ABRECOLCH)
     {
-        fprintf(stderr, "Erro sintatico: '(' esperado");
+        fprintf(stderr, "Erro sintatico: token esperado \'%c\'\n", tokenAbertura);
         exit(2);
     }
 
@@ -97,10 +111,9 @@ Expressao *AnaliseExpressao()
     t = ProximoToken();
     Token *c = t;
 
-    if (t->tipo != TOKEN_FECHAPAR)
-    {
-        fprintf(stderr, "Erro sintatico: ')' esperado");
-        exit(2);
+    if(t->tipo != tipoFechamentoToken){
+        fprintf(stderr, "Erro sintatico: token esperado \'%c\'\n", tokenFechamento);
+        exit(1);
     }
 
     return res;
