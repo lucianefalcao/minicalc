@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "arq.h"
 #include "lexer.h"
@@ -37,6 +38,11 @@ int AvaliaExpressao(Expressao* e) {
             v1 = AvaliaExpressao(e->op1);
             v2 = AvaliaExpressao(e->op2);
             res = v1 % v2;
+            break;
+        case OPER_EXPO:
+            v1 = AvaliaExpressao(e->op1);
+            v2 = AvaliaExpressao(e->op2);
+            res = (int) powf((float)v1, (float)v2);
             break;
         default:
             printf("Operador nao reconhecido.\n");

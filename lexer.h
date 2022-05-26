@@ -21,6 +21,7 @@ typedef enum tagTipoToken {
     TOKEN_FECHACOLCH,
     TOKEN_DECIMAL,
     TOKEN_RESTODIV,
+    TOKEN_EXPO,
     TOKEN_EOF,
 } TipoToken;
 

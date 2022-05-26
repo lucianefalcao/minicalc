@@ -84,7 +84,7 @@ Expressao *AnaliseExpressao()
     t = ProximoToken();
     Token *a = t;
 
-    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT && t->tipo != TOKEN_SUB && t->tipo != TOKEN_DIV && t->tipo != TOKEN_RESTODIV)
+    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT && t->tipo != TOKEN_SUB && t->tipo != TOKEN_DIV && t->tipo != TOKEN_RESTODIV && t->tipo != TOKEN_EXPO)
     {
         fprintf(stderr, "Erro sintatico: operador esperado");
         exit(2);
@@ -99,6 +99,8 @@ Expressao *AnaliseExpressao()
         res->oper = OPER_DIV;
     } else if (t->tipo == TOKEN_RESTODIV) {
         res->oper = OPER_RESTODIV;
+    } else if (t->tipo == TOKEN_EXPO) {
+        res->oper = OPER_EXPO;
     }
 
     // segundo operando
@@ -123,7 +125,7 @@ Expressao *AnaliseExpressao()
 
 void DestroiExpressao(Expressao *e)
 {
-    if (e->oper == OPER_SOMA || e->oper == OPER_MULT || e->oper == OPER_SUB || e->oper == OPER_DIV || e->oper == OPER_RESTODIV)
+    if (e->oper == OPER_SOMA || e->oper == OPER_MULT || e->oper == OPER_SUB || e->oper == OPER_DIV || e->oper == OPER_RESTODIV || e->oper == OPER_EXPO)
     {
         DestroiExpressao(e->op1);
         DestroiExpressao(e->op2);
