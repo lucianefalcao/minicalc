@@ -6,6 +6,7 @@ typedef enum tagTipoOper {
     OPER_SOMA,
     OPER_MULT,
     OPER_SUB,
+    OPER_DIV,
     OPER_CONST
 } TipoOper;
 
