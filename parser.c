@@ -10,7 +10,8 @@ Programa *AnalisePrograma()
 {
     Programa *res = (Programa *)malloc(sizeof(Programa));
 
-    if (res == NULL) {
+    if (res == NULL)
+    {
         fprintf(stderr, "Erro de alocacao de memoria.");
         exit(1);
     }
@@ -26,12 +27,13 @@ Programa *AnalisePrograma()
 
     res->e = AnaliseExpressao();
 
-    //    t = ProximoToken();
-    //
-    //    if (t->tipo != TOKEN_EOF) {
-    //        fprintf(stderr, "Erro sintatico: entrada adicional apos fim do programa.");
-    //        exit(2);
-    //    }
+    t = ProximoToken();
+
+    if (t->tipo != TOKEN_EOF)
+    {
+        fprintf(stderr, "Erro sintatico: entrada adicional apos fim do programa.");
+        exit(2);
+    }
 
     return res;
 }
@@ -68,13 +70,21 @@ Expressao *AnaliseExpressao()
     t = ProximoToken();
     Token *a = t;
 
-    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT)
+    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT && t->tipo != TOKEN_SUB)
     {
         fprintf(stderr, "Erro sintatico: operador esperado");
         exit(2);
     }
 
-    res->oper = (t->tipo == TOKEN_SOMA ? OPER_SOMA : OPER_MULT);
+    res->oper = OPER_SUB;
+    if (t->tipo == TOKEN_SOMA)
+    {
+        res->oper = OPER_SOMA;
+    }
+    else if (t->tipo == TOKEN_MULT)
+    {
+        res->oper = OPER_MULT;
+    }
 
     // segundo operando
     res->op2 = AnaliseExpressao();
@@ -94,7 +104,7 @@ Expressao *AnaliseExpressao()
 
 void DestroiExpressao(Expressao *e)
 {
-    if (e->oper == OPER_SOMA || e->oper == OPER_MULT)
+    if (e->oper == OPER_SOMA || e->oper == OPER_MULT || e->oper == OPER_SUB)
     {
         DestroiExpressao(e->op1);
         DestroiExpressao(e->op2);
