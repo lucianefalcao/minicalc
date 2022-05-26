@@ -84,7 +84,7 @@ Expressao *AnaliseExpressao()
     t = ProximoToken();
     Token *a = t;
 
-    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT && t->tipo != TOKEN_SUB && t->tipo != TOKEN_DIV)
+    if (t->tipo != TOKEN_SOMA && t->tipo != TOKEN_MULT && t->tipo != TOKEN_SUB && t->tipo != TOKEN_DIV && t->tipo != TOKEN_RESTODIV)
     {
         fprintf(stderr, "Erro sintatico: operador esperado");
         exit(2);
@@ -97,12 +97,14 @@ Expressao *AnaliseExpressao()
         res->oper = OPER_MULT;
     } else if (t->tipo == TOKEN_DIV) {
         res->oper = OPER_DIV;
+    } else if (t->tipo == TOKEN_RESTODIV) {
+        res->oper = OPER_RESTODIV;
     }
 
     // segundo operando
     res->op2 = AnaliseExpressao();
 
-    if (res->oper == OPER_DIV && res->op2->valor == 0) {
+    if ((res->oper == OPER_DIV || res->oper == OPER_RESTODIV) && res->op2->valor == 0) {
         fprintf(stderr, "Erro matemático: divisão por zero");
         exit(2);
     }
@@ -121,7 +123,7 @@ Expressao *AnaliseExpressao()
 
 void DestroiExpressao(Expressao *e)
 {
-    if (e->oper == OPER_SOMA || e->oper == OPER_MULT || e->oper == OPER_SUB || e->oper == OPER_DIV)
+    if (e->oper == OPER_SOMA || e->oper == OPER_MULT || e->oper == OPER_SUB || e->oper == OPER_DIV || e->oper == OPER_RESTODIV)
     {
         DestroiExpressao(e->op1);
         DestroiExpressao(e->op2);

@@ -51,7 +51,7 @@ char* TextoToken(long ini, long fim) {
 }
 
 bool simbolo(char c) {
-    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/' || c == '[' || c == ']');
+    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/' || c == '[' || c == ']' || c == '%');
 }
 
 // função: ProximoToken
@@ -140,7 +140,10 @@ Token* ProximoToken() {
                 break;
             case ']':
                 tok->tipo = TOKEN_FECHACOLCH;
-                break;    
+                break;  
+            case '%':
+                tok->tipo = TOKEN_RESTODIV;
+                break;   
             default:
                 fprintf(stderr, "Simbolo não esperado: %c\n", buffer->cont[pos]);
         }
