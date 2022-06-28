@@ -6,6 +6,51 @@
 
 Token *t;
 
+Declaracao *AnaliseDeclaracao()
+{
+    t = ProximoToken();
+
+    if (t->tipo != TOKEN_VAR)
+    {
+        return NULL;
+    }
+
+    Declaracao *res = (Declaracao *)malloc(sizeof(Declaracao));
+
+    t = ProximoToken();
+
+    if (t->tipo != TOKEN_IDENT)
+    {
+        fprintf(stderr, "Erro de sintaxe: identificador esperado\n");
+        free(res);
+        exit(2);
+    }
+
+    strcpy(res->nomeIdent, t->nome);
+
+    t = ProximoToken();
+
+    if (t->tipo != TOKEN_IGUAL)
+    {
+        fprintf(stderr, "Erro de sintaxe: '=' esperado\n");
+        free(res);
+        exit(2);
+    }
+
+    res->e = AnaliseExpressao();
+
+    t = ProximoToken();
+
+    if (t->tipo != TOKEN_PONTOVIRG)
+    {
+        fprintf(stderr, "Erro de sintaxe: ';' esperado no final da declaracao\n");
+        free(res);
+        exit(2);
+    }
+
+    return res;
+}
+
 Programa *AnalisePrograma()
 {
     Programa *res = (Programa *)malloc(sizeof(Programa));
@@ -16,8 +61,21 @@ Programa *AnalisePrograma()
         exit(1);
     }
 
-    // verifica se o programa começa com palavra-chave 'print'
-    t = ProximoToken();
+    Declaracao *orig = AnaliseDeclaracao(); // origem da lista encadeada
+    Declaracao *d = orig;
+    if (d != NULL)
+    {
+        Declaracao *d2 = AnaliseDeclaracao();
+        while (d2 != NULL)
+        {
+            d->next = d2;
+            d = d2;
+            d2 = AnaliseDeclaracao();
+        }
+        d->next = NULL;
+    }
+
+    res->decls = orig;
 
     if (t->tipo != TOKEN_PRINT)
     {
@@ -26,14 +84,6 @@ Programa *AnalisePrograma()
     }
 
     res->e = AnaliseExpressao();
-
-    t = ProximoToken();
-
-    if (t->tipo != TOKEN_EOF)
-    {
-        fprintf(stderr, "Erro sintatico: entrada adicional apos fim do programa.");
-        exit(2);
-    }
 
     return res;
 }
@@ -48,7 +98,6 @@ Expressao *AnaliseExpressao()
 
     // parentese abrindo
     t = ProximoToken();
-    Token *b = t;
 
     // se proximo token for constante inteira, retorne expressao constante
     if (t->tipo == TOKEN_INT)
@@ -59,16 +108,28 @@ Expressao *AnaliseExpressao()
         res->op2 = NULL;
         return res;
     }
-    
-    if(t->tipo == TOKEN_ABREPAR){
+
+    if (t->tipo == TOKEN_IDENT)
+    {
+        res->oper = OPER_VAR;
+        res->valor = 0;
+        strcpy(res->nomeIdent, t->nome);
+        res->op1 = NULL;
+        res->op2 = NULL;
+        return res;
+    }
+
+    if (t->tipo == TOKEN_ABREPAR)
+    {
         tipoFechamentoToken = TOKEN_FECHAPAR;
         tokenFechamento = ')';
         tokenAbertura = '(';
     }
-    else if(t->tipo == TOKEN_ABRECOLCH){
+    else if (t->tipo == TOKEN_ABRECOLCH)
+    {
         tipoFechamentoToken = TOKEN_FECHACOLCH;
         tokenFechamento = ']';
-        tokenAbertura = '[';        
+        tokenAbertura = '[';
     }
 
     if (t->tipo != TOKEN_ABREPAR && t->tipo != TOKEN_ABRECOLCH)
@@ -91,22 +152,32 @@ Expressao *AnaliseExpressao()
     }
 
     res->oper = OPER_SUB;
-    if (t->tipo == TOKEN_SOMA) {
+    if (t->tipo == TOKEN_SOMA)
+    {
         res->oper = OPER_SOMA;
-    } else if (t->tipo == TOKEN_MULT) {
+    }
+    else if (t->tipo == TOKEN_MULT)
+    {
         res->oper = OPER_MULT;
-    } else if (t->tipo == TOKEN_DIV) {
+    }
+    else if (t->tipo == TOKEN_DIV)
+    {
         res->oper = OPER_DIV;
-    } else if (t->tipo == TOKEN_RESTODIV) {
+    }
+    else if (t->tipo == TOKEN_RESTODIV)
+    {
         res->oper = OPER_RESTODIV;
-    } else if (t->tipo == TOKEN_EXPO) {
+    }
+    else if (t->tipo == TOKEN_EXPO)
+    {
         res->oper = OPER_EXPO;
     }
 
     // segundo operando
     res->op2 = AnaliseExpressao();
 
-    if ((res->oper == OPER_DIV || res->oper == OPER_RESTODIV) && res->op2->valor == 0) {
+    if ((res->oper == OPER_DIV || res->oper == OPER_RESTODIV) && res->op2->valor == 0)
+    {
         fprintf(stderr, "Erro matemático: divisão por zero");
         exit(2);
     }
@@ -115,7 +186,8 @@ Expressao *AnaliseExpressao()
     t = ProximoToken();
     Token *c = t;
 
-    if(t->tipo != tipoFechamentoToken){
+    if (t->tipo != tipoFechamentoToken)
+    {
         fprintf(stderr, "Erro sintatico: token esperado \'%c\'\n", tokenFechamento);
         exit(1);
     }
@@ -136,9 +208,21 @@ void DestroiExpressao(Expressao *e)
     free(e);
 }
 
+void DestroiDeclaracoes(Declaracao *d)
+{
+    Declaracao *d2;
+    while (d != NULL)
+    {
+        d2 = d->next;
+        free(d);
+        d = d2;
+    }
+}
+
 void DestroiPrograma(Programa *p)
 {
     DestroiExpressao(p->e);
+    DestroiDeclaracoes(p->decls);
     p->e = NULL;
     free(p);
 }
