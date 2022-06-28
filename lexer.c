@@ -13,14 +13,16 @@ static Token *tok = NULL;
 
 static long pos = 0;
 
-void InicializaLexer(char *arqFonte) {
+void InicializaLexer(char *arqFonte)
+{
     buffer = CriaBuffer(arqFonte);
 
     pos = 0;
 
-    tok = (Token*) malloc(sizeof(Token));
+    tok = (Token *)malloc(sizeof(Token));
 
-    if (tok == NULL) {
+    if (tok == NULL)
+    {
         fprintf(stderr, "Erro alocando memoria para o token\n");
         exit(2);
     }
@@ -29,19 +31,23 @@ void InicializaLexer(char *arqFonte) {
     tok->valor.valorInt = 0;
 }
 
-bool eof() {
+bool eof()
+{
     return !(pos < buffer->tam - 1);
 }
 
-char* TextoToken(long ini, long fim) {
-    char *str = (char*) malloc(fim - ini + 1);
+char *TextoToken(long ini, long fim)
+{
+    char *str = (char *)malloc(fim - ini + 1);
 
-    if (str == NULL) {
+    if (str == NULL)
+    {
         fprintf(stderr, "Erro alocando memoria\n");
         exit(1);
     }
 
-    for (int i = 0; i + ini < fim; ++i) {
+    for (int i = 0; i + ini < fim; ++i)
+    {
         str[i] = buffer->cont[i + ini];
     }
 
@@ -50,37 +56,43 @@ char* TextoToken(long ini, long fim) {
     return str;
 }
 
-bool simbolo(char c) {
-    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/' || c == '[' || c == ']' || c == '%' || c == '^');
+bool simbolo(char c)
+{
+    return (c == '(' || c == ')' || c == '+' || c == '*' || c == '-' || c == '/' || c == '[' || c == ']' || c == '%' || c == '^' || c == '=' || c == ';');
 }
 
 // função: ProximoToken
 //
 // Dado o arquivo-fonte, obtem e retorna o próximo token
-Token* ProximoToken() {
-    // TODO: obtem o proximo token da entrada e preenche tok
-
+Token *ProximoToken()
+{
     // pula espaços em branco
     while (!eof() && isspace(buffer->cont[pos]))
         pos++;
-    
-    while(!eof() && buffer->cont[pos] == '#'){
-        while(pos < buffer->tam){
+
+    while (!eof() && buffer->cont[pos] == '#')
+    {
+        while (pos < buffer->tam)
+        {
             ++pos;
 
-            if(buffer->cont[pos] == '\n'){
+            if (buffer->cont[pos] == '\n')
+            {
                 ++pos;
                 break;
             }
         }
     }
 
-    if (eof()) {
+    if (eof())
+    {
         tok->tipo = TOKEN_EOF;
         tok->valor.valorInt = 0;
-    } else if (isalpha(buffer->cont[pos])) {
+    }
+    else if (isalpha(buffer->cont[pos]))
+    {
         long initPos = pos;
-        while (!eof() && !isspace(buffer->cont[pos]))
+        while (!eof() && !isspace(buffer->cont[pos]) && !simbolo(buffer->cont[pos]))
             pos++;
         // texto do token: entre initPos e pos-1 no buffer
         char *texto = TextoToken(initPos, pos);
@@ -88,71 +100,96 @@ Token* ProximoToken() {
         {
             tok->tipo = TOKEN_PRINT;
             tok->valor.valorInt = 0;
-        } else {
-            tok->tipo = TOKEN_ERRO;
+        }
+        else if (strcmp(texto, "var") == 0)
+        {
+            tok->tipo = TOKEN_VAR;
             tok->valor.valorInt = 0;
         }
+        else
+        {
+            tok->tipo = TOKEN_IDENT;
+            strcpy(tok->nome, texto);
+        }
         free(texto);
-    } else if (isdigit(buffer->cont[pos])) {
+    }
+    else if (isdigit(buffer->cont[pos]))
+    {
         long initPos = pos;
         bool decimal = false;
         // TODO: verificar se existe erro léxico no final do literal inteiro
-        while (!eof() && (isdigit(buffer->cont[pos]) || buffer->cont[pos] == '.')) {
-            if (buffer->cont[pos] == '.') {
+        while (!eof() && (isdigit(buffer->cont[pos]) || buffer->cont[pos] == '.'))
+        {
+            if (buffer->cont[pos] == '.')
+            {
                 decimal = true;
             }
             pos++;
         }
 
         char *texto = TextoToken(initPos, pos);
-        
-        if (decimal) {
+
+        if (decimal)
+        {
             tok->tipo = TOKEN_DECIMAL;
             sscanf(texto, "%lf", &tok->valor.valorFloat);
-        } else {
+        }
+        else
+        {
             tok->tipo = TOKEN_INT;
             tok->valor.valorInt = atoi(texto);
         }
 
         free(texto);
-    } else if (simbolo(buffer->cont[pos])) {
-        switch (buffer->cont[pos]) {
-            case '(':
-                tok->tipo = TOKEN_ABREPAR;
-                break;
-            case ')':
-                tok->tipo = TOKEN_FECHAPAR;
-                break;
-            case '+':
-                tok->tipo = TOKEN_SOMA;
-                break;
-            case '*':
-                tok->tipo = TOKEN_MULT;
-                break;
-            case '-':
-                tok->tipo = TOKEN_SUB;
-                break;
-            case '/':
-                tok->tipo = TOKEN_DIV;
-                break;
-            case '[':
-                tok->tipo = TOKEN_ABRECOLCH;
-                break;
-            case ']':
-                tok->tipo = TOKEN_FECHACOLCH;
-                break;  
-            case '%':
-                tok->tipo = TOKEN_RESTODIV;
-                break;
-            case '^':
-                tok->tipo = TOKEN_EXPO;
-                break;   
-            default:
-                fprintf(stderr, "Simbolo não esperado: %c\n", buffer->cont[pos]);
+    }
+    else if (simbolo(buffer->cont[pos]))
+    {
+        switch (buffer->cont[pos])
+        {
+        case '(':
+            tok->tipo = TOKEN_ABREPAR;
+            break;
+        case ')':
+            tok->tipo = TOKEN_FECHAPAR;
+            break;
+        case '+':
+            tok->tipo = TOKEN_SOMA;
+            break;
+        case '*':
+            tok->tipo = TOKEN_MULT;
+            break;
+        case '-':
+            tok->tipo = TOKEN_SUB;
+            break;
+        case '/':
+            tok->tipo = TOKEN_DIV;
+            break;
+        case '[':
+            tok->tipo = TOKEN_ABRECOLCH;
+            break;
+        case ']':
+            tok->tipo = TOKEN_FECHACOLCH;
+            break;
+        case '%':
+            tok->tipo = TOKEN_RESTODIV;
+            break;
+        case '^':
+            tok->tipo = TOKEN_EXPO;
+            break;
+        case '=':
+            tok->tipo = TOKEN_IGUAL;
+            break;
+        case ';':
+            tok->tipo = TOKEN_PONTOVIRG;
+            break;
+        default:
+            fprintf(stderr, "Simbolo não esperado: %c\n", buffer->cont[pos]);
         }
         tok->valor.valorInt = 0;
         pos++;
-    } else {
+    }
+    else
+    {
         tok->tipo = TOKEN_ERRO;
         tok->valor.valorInt = 0;
     }
@@ -160,7 +197,8 @@ Token* ProximoToken() {
     return tok;
 }
 
-void FinalizaLexer() {
+void FinalizaLexer()
+{
     DestroiBuffer(buffer);
     free(tok);
 }
