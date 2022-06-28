@@ -15,7 +15,7 @@ int AvaliaExpressao(Expressao *e)
     switch (e->oper)
     {
     case OPER_VAR:
-        if (ConsultarVar(e->nomeIdent, &v1))
+        if (ConsultaVar(e->nomeIdent, &v1))
         {
             res = v1;
         }
@@ -65,12 +65,33 @@ int AvaliaExpressao(Expressao *e)
     return res;
 }
 
+void ImprimeDeclaracoes(Declaracao *d)
+{
+    while (d != NULL)
+    {
+        printf("Declaracao - ident: %s\n", d->nomeIdent);
+        d = d->next;
+    }
+}
+
+void ProcessaDeclaracoes(Declaracao *d)
+{
+    while (d != NULL)
+    {
+        int val = AvaliaExpressao(d->e);
+        AdicionaVar(d->nomeIdent, val);
+        d = d->next;
+    }
+}
+
 int main()
 {
     InicializaLexer("../test/expcomplexa.mc");
 
     // arvore sintatica do programa
     Programa *p = AnalisePrograma();
+
+    ProcessaDeclaracoes(p->decls);
 
     int resultado = AvaliaExpressao(p->e);
 

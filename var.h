@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-void AdicionarVar(char *nome, int valor);
-bool ConsultarVar(char *nome, int *valor);
+void AdicionaVar(char *nome, int valor);
+bool ConsultaVar(char *nome, int *valor);
 
-#endif
+#endif // MINICALC_VAR_H
