@@ -177,7 +177,7 @@ Expressao *AnaliseExpressao()
     // segundo operando
     res->op2 = AnaliseExpressao();
 
-    if ((res->oper == OPER_DIV || res->oper == OPER_RESTODIV) && res->op2->valor == 0)
+    if ((res->oper == OPER_DIV || res->oper == OPER_RESTODIV) && (res->op2->valor == 0 && res->op2->oper != OPER_VAR))
     {
         fprintf(stderr, "Erro matemático: divisão por zero");
         exit(2);
