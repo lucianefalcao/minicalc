@@ -86,7 +86,7 @@ void ProcessaDeclaracoes(Declaracao *d)
 
 int main()
 {
-    InicializaLexer("../test/test3.mc");
+    InicializaLexer("../test/test4.mc");
 
     // arvore sintatica do programa
     Programa *p = AnalisePrograma();
